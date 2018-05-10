@@ -203,7 +203,7 @@ func Logger(next http.Handler) http.Handler {
 }
 ```
 
-## Logger
+## Auth
 
 ```go
 package middleware
