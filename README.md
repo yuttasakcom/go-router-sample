@@ -4,10 +4,14 @@
 
 * [maing](#main)
 * [Routes](#routes)
-* [router](#router)
-* [usersAPI](#usersapi)
-* [usersPostAPI](#userspostapi)
-* [postsAPI](#postsapi)
+  * [router](#router)
+  * [usersAPI](#usersapi)
+  * [usersPostAPI](#userspostapi)
+  * [postsAPI](#postsapi)
+* [Middleware](#middleware)
+  * [Middleware](#middleware)
+  * [Logger](#logger)
+  * [Auth](#auth)
 
 ## Main
 
@@ -39,11 +43,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/yuttasakcom/gorilla-router-sample/middleware"
 )
 
 // Router http.Handler
 func Router() http.Handler {
 	r := mux.NewRouter()
+	r.Use(middleware.Logger)
 
 	s := r.PathPrefix("/api").Subrouter()
 	usersAPI(s)
@@ -100,13 +106,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/yuttasakcom/gorilla-router-sample/middleware"
 )
 
 func usersPostAPI(s *mux.Router) {
-	s.HandleFunc("/users/{userId}/post", func(w http.ResponseWriter, r *http.Request) {
+
+	s.Handle("/users/{userId}/post", middleware.Chain(
+		middleware.Auth,
+	)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		w.Write([]byte("POST /api/users/" + vars["userId"] + "/post"))
-	}).Methods("POST")
+		w.Write([]byte("POST /api/users/" + vars["userId"] + "/posts"))
+	}))).Methods("POST")
 
 	s.HandleFunc("/users/{userId}/posts", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -150,5 +160,66 @@ func postsAPI(s *mux.Router) {
 		vars := mux.Vars(r)
 		w.Write([]byte("GET /api/posts/" + vars["postId"]))
 	}).Methods("GET")
+}
+```
+
+## Middleware
+
+```go
+package middleware
+
+import "net/http"
+
+// Middleware http.Handler
+type Middleware func(http.Handler) http.Handler
+
+// Chain Middleware
+func Chain(hs ...Middleware) Middleware {
+	return func(h http.Handler) http.Handler {
+		for i := len(hs); i > 0; i-- {
+			h = hs[i-1](h)
+		}
+		return h
+	}
+}
+```
+
+## Logger
+
+```go
+package middleware
+
+import (
+	"log"
+	"net/http"
+)
+
+// Logger http.Handler
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
+}
+```
+
+## Logger
+
+```go
+package middleware
+
+import (
+	"log"
+	"net/http"
+)
+
+// Auth Middleware
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		log.Println("Bearer " + r.Header.Get("Authorization"))
+
+		next.ServeHTTP(w, r)
+	})
 }
 ```

@@ -10,7 +10,7 @@ import (
 func usersPostAPI(s *mux.Router) {
 
 	s.Handle("/users/{userId}/post", middleware.Chain(
-		middleware.Auth("token"),
+		middleware.Auth,
 	)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		w.Write([]byte("POST /api/users/" + vars["userId"] + "/posts"))
@@ -35,8 +35,4 @@ func usersPostAPI(s *mux.Router) {
 		vars := mux.Vars(r)
 		w.Write([]byte("DELETE /api/users/" + vars["userId"] + "/post/" + vars["postId"]))
 	}).Methods("DELETE")
-}
-
-func userCreatePost(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Created"))
 }
