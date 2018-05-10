@@ -9,9 +9,9 @@
   * [usersPostAPI](#userspostapi)
   * [postsAPI](#postsapi)
 * [Middleware](#middleware)
-  * [Middleware](#middleware)
-  * [Logger](#logger)
-  * [Auth](#auth)
+  * [middleware](#middleware)
+  * [logger](#logger)
+  * [auth](#auth)
 
 ## Main
 
@@ -163,7 +163,7 @@ func postsAPI(s *mux.Router) {
 }
 ```
 
-## Middleware
+## middleware
 
 ```go
 package middleware
@@ -184,7 +184,7 @@ func Chain(hs ...Middleware) Middleware {
 }
 ```
 
-## Logger
+## logger
 
 ```go
 package middleware
@@ -203,7 +203,7 @@ func Logger(next http.Handler) http.Handler {
 }
 ```
 
-## Auth
+## auth
 
 ```go
 package middleware
