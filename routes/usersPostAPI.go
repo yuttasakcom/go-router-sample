@@ -4,13 +4,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/yuttasakcom/gorilla-router-sample/middleware"
 )
 
 func usersPostAPI(s *mux.Router) {
-	s.HandleFunc("/users/{userId}/post", func(w http.ResponseWriter, r *http.Request) {
+
+	s.Handle("/users/{userId}/post", middleware.Chain(
+		middleware.Auth("token"),
+	)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		w.Write([]byte("POST /api/users/" + vars["userId"] + "/post"))
-	}).Methods("POST")
+		w.Write([]byte("POST /api/users/" + vars["userId"] + "/posts"))
+	}))).Methods("POST")
 
 	s.HandleFunc("/users/{userId}/posts", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -31,4 +35,8 @@ func usersPostAPI(s *mux.Router) {
 		vars := mux.Vars(r)
 		w.Write([]byte("DELETE /api/users/" + vars["userId"] + "/post/" + vars["postId"]))
 	}).Methods("DELETE")
+}
+
+func userCreatePost(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Created"))
 }
