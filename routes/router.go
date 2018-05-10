@@ -11,7 +11,9 @@ func Router() http.Handler {
 	r := mux.NewRouter()
 
 	s := r.PathPrefix("/api").Subrouter()
-	usersRouter(s)
+	usersAPI(s)
+	usersPostAPI(s)
+	postsAPI(s)
 
 	return r
 }

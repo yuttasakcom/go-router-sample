@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yuttasakcom/go-router-sample/routes"
+	"github.com/yuttasakcom/gorilla-router-sample/routes"
 )
 
 func main() {
