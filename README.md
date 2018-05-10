@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-* [maing](#main)
+* [main](#main)
 * [Routes](#routes)
   * [router](#router)
   * [usersAPI](#usersapi)
