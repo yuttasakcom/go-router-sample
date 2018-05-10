@@ -163,6 +163,8 @@ func postsAPI(s *mux.Router) {
 }
 ```
 
+## Middleware
+
 ## middleware
 
 ```go
